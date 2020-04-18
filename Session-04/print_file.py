@@ -1,3 +1,5 @@
+#--Session 4. Exercise 2
+
 from pathlib import Path
 
 # -- Constant with the new of the file to open

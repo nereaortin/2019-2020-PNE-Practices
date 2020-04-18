@@ -1,4 +1,4 @@
-
+#-- Session 3. Exercise 2
 count_A = 0
 count_C = 0
 count_T = 0

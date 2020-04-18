@@ -1,13 +1,12 @@
+#--Session 4. Exercise 4
 from pathlib import Path
 
-try:
-    FILENAME = "RNU6_269P.txt"
-    with open(FILENAME, "r") as f:
-        file_contents = Path(FILENAME).read_text()
-        header = next(f)
-        for line in f:
-            components = line.replace("\n", " ")
-            print(components)
-        f.close()
-except FileNotFoundError:
-    print("That file does not exist")
+
+file_contents = Path("U5.txt").read_text()
+data = file_contents.split('\n')
+
+body = data[1:]
+text = "\n".join(body)
+
+
+print(f'the body of the print "U5.txt" file is:', text)

@@ -1,3 +1,5 @@
+#--Session 3. Exercise 1
+
 def g(a, b):
     return a - b
 

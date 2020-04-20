@@ -7,7 +7,7 @@ genes = ["U5", "ADA", "FRAT1", "FXN", "U5"] # List of genes
 gene = genes[0] #gene of the list we want
 
 
-print("-----| Exercise 6 |------")
+print("-----| Exercise 7 |------")
 
 print("Gene", gene)
 seq = seq_read_fasta(folder + gene + ext)[:20] #  .txt to read properly the file for every gene folder

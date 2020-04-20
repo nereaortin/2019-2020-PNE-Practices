@@ -1,29 +1,28 @@
-s1 = Seq("ACCTGC")
-s2 = Seq("Hello? Am I a valid sequence?")
-
-
 class Seq:
-    """A class for representing sequence objects"""
-
     def __init__(self, strbases):
         self.strbases = strbases
-        for element in s1:
-            if element != "A" and element != "C" and element != "T" and element != "G":
-                s1 = "ERROR!"
-                print(s1)
-        for element in s2:
-            if element != "A" and element != "C" and element != "T" and element != "G":
-                s2 = "ERROR!"
-                print(s2)
-        print("new sequence created")
+        # passed as argument when creating the object
+        print("New sequence created!")
+        # It is a special method that is called every time a new object is created
+
+        bases = ['A', 'C', 'G', 'T']
+
+        for base in strbases:
+            if base not in bases:
+                print("ERROR!!")
+                print("Sequence 2: ERROR!!")
+            return
 
     def __str__(self):
+        # it run each time something is print
         return self.strbases
+        # it gives the internal info of the object
 
     def len(self):
+        # self means inside the method
         return len(self.strbases)
 
 
-
+s1 = Seq("ACCTGC")
+s2 = Seq("Hello? Am I a valid sequence?")
 print(f"Sequence 1: {s1}")
-print(f"Sequence 2: {s2}")

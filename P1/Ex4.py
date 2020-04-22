@@ -1,9 +1,10 @@
 #Session 7. Exercise 4
 
-from Seq1 import Seq
+from Ex1 import Seq
+
 print("-----| Practice 1, Exercise 4 |------")
-#we are creating sequences passing a string with the bases to an object
-#null sequence
+
+#--null sequence
 s1 = Seq()
 
 # -- Create a valid sequence

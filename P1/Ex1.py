@@ -1,8 +1,8 @@
 #Session 7. Exercise 1
 
-from Seq1 import Seq  # IMPORTANT!!!!!!!!
+#create sequence passing a string to an object
+from Ex1 import Seq
 
-# we are creating sequences passing a string with the bases to an object
 
 print("-----| Exercise 1 |------")
 

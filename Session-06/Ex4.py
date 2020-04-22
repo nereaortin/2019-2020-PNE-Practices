@@ -4,32 +4,29 @@ import termcolor
 class Seq:
     def __init__(self, strbases):
         self.strbases = strbases
-        print("New sequence created!")
         # passed as argument when creating the object
-        # It is a special method that is called every time a new object is created
 
     def __str__(self):
-        # it run each time something is print
+        # shows the internal info of the object
         return self.strbases
-        # it gives the internal info of the object
 
     def len(self):
-        # self means inside the method
+        # calculate the length of the sequence
         return len(self.strbases)
 
 
-def print_seqs(seq, color):
-    # the function print_seqs(seq_list) that receives a list of sequences
-    # and prints their number in the list, their length and the sequence itself
-    for s in seq:
-        termcolor.cprint(f"Sequence {seq.index(s)}: (Length: {s.len()}) {s}", color)
+def print_seqs(sequence): #this function receives a list of sequences
+    for i in sequence:
+        print("Sequence ", sequence.index(i), "(Lenght: ", i.len(), ")", i)
+#the function print_seqs() returns the index, length and the sequence itseelf
 
 
-def generate_seqs(seq, number):
-    seqs = []
+def generate_seqs(base, number):
+    #this function returns a list with sequences where the pattern of bases is repeated from 1 to number
+    seq_list= []
     for i in range(1, number + 1):
-        seqs.append(Seq(seq * i))
-    return seqs
+        seq_list.append(Seq(base * i))
+    return seq_list
 
 
 seq_list1 = generate_seqs("A", 3)
@@ -38,5 +35,5 @@ seq_list2 = generate_seqs("AC", 5)
 termcolor.cprint("List 1", 'blue')
 print_seqs(seq_list1, "blue")
 print()
-termcolor.cprint("List 2:", 'yellow')
-print_seqs(seq_list2, 'green')
+termcolor.cprint("List 2:", 'green')
+print_seqs(seq_list2, "green")

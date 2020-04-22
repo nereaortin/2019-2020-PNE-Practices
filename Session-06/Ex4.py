@@ -1,3 +1,5 @@
+#Session 6. Exercise 4
+
 import termcolor
 
 

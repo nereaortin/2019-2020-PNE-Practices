@@ -6,6 +6,7 @@ import termcolor
 class Seq:
     def __init__(self, strbases):
         self.strbases = strbases
+        print("new sequence created")
         # passed as argument when creating the object
 
     def __str__(self):
@@ -16,19 +17,19 @@ class Seq:
         # calculate the length of the sequence
         return len(self.strbases)
 
-
-def print_seqs(sequence): #this function receives a list of sequences
-    for i in sequence:
-        print("Sequence ", sequence.index(i), "(Lenght: ", i.len(), ")", i)
-#the function print_seqs() returns the index, length and the sequence itseelf
+def print_seqs(list_seq): #this function receives a list of sequences/objects of class seq
+    for i in list_seq:
+        print("Sequence ", list_seq.index(i), "(Lenght: ", i.len(), ")", i)
+#the function print_seqs() returns the index, length and the sequence itself
 
 
 def generate_seqs(base, number):
     #this function returns a list with sequences where the pattern of bases is repeated from 1 to number
-    seq_list= []
+    new_seqlist= []
     for i in range(1, number + 1):
-        seq_list.append(Seq(base * i))
-    return seq_list
+        new_seqlist.append(Seq(base * i))
+    return new_seqlist
+
 
 
 seq_list1 = generate_seqs("A", 3)

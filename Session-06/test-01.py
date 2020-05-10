@@ -2,8 +2,7 @@ from Seq0 import *
 
 seq1 = "ATTCCCGGGG"
 
-#check the sequence is correct
-seq_check(seq1)
+
 
 print(f"Seq:    {seq1}")
 print(f"  Rev : {seq_reverse(seq1)}")

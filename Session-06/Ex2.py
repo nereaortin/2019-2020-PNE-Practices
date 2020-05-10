@@ -14,10 +14,10 @@ class Seq:
         return len(self.strbases)
 
 
-def print_seqs(sequence): #this function receives a list of sequences
-    for i in sequence:
-        print("Sequence ", sequence.index(i), "(Lenght: ", i.len(), ")", i)
-#the function print_seqs() returns the index, length and the sequence itseelf
+def print_seqs(list_seq): #this function receives a list of sequences/objects of class seq
+    for i in list_seq:
+        print("Sequence ", list_seq.index(i), "(Lenght: ", i.len(), ")", i)
+#the function print_seqs() returns the index, length and the sequence itself
 
 seq_list = [Seq("ACT"), Seq("GATA"), Seq("CAGATA")]
 print_seqs(seq_list)

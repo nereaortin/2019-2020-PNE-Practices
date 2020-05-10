@@ -1,24 +1,22 @@
 #Session 6.Exercise 1
 class Seq:
     def __init__(self, strbases):
-        self.strbases = strbases
-        # passed as argument when creating the object
-        print("New sequence created!")#method called every time a new object is created
+
         bases = ['A', 'C', 'G', 'T']
 
         for letter in strbases:
             if letter not in bases:
-                print("ERROR!!")
+                print("ERROR!")
                 self.strbases = "ERROR"
-            return
-        self.strbases = strbases
+                return
+        self.strbases = strbases # passed as argument when creating the object
+        print("New sequence created!")  # method called every time a new object is created
 
     def __str__(self):
-        return self.strbases# shows the internal info of the object
+        return self.strbases# shows the info of the object
 
     def len(self):
-        #calculate the length of the sequence
-        return len(self.strbases)
+        return len(self.strbases)#calculate the length of the sequence
 
 
 s1 = Seq("ACCTGC")

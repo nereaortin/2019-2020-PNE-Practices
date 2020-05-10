@@ -40,9 +40,9 @@ def seq_complement(seq):  # Returns a complementary DNA sequence
     # Create a dictionary  with the shape {base : complementary}
     complementary = ""
     for i in seq:  # Go throw every character in the sequence
-        for base, bases_co in dict_bases_complementary.items():
+        for base, bases_com in dict_bases_complementary.items():
             # .items() gets the keys and values from a dictionary
             if i == base:  # Example if A == A we add the complementary T to the complementary string
-                complementary += bases_co
+                complementary += bases_com
 
     return complementary  # Return the final complementary sequence

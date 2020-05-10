@@ -7,4 +7,4 @@ filename = "U5.txt" #file we want to read
 
 print("-----| Exercise 2 |------")
 print("The first 20 bases are: ", seq_read_fasta(folder + filename)[:20])
-# seq_read_fasta() function reads file and return content
+# seq_read_fasta() function reads file and return its content (only the body)

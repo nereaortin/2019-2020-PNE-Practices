@@ -10,5 +10,5 @@ print("-----| Exercise 5 |------")
 
 for name in genes:
     seq = seq_read_fasta(folder + name + ext)
-    print("Gene " + file, seq_count(sequence))
-    # with this function we count the namber of bases in each folder
+    print("Gene " + name, seq_count(seq))
+    # with this function we count the number of each bases in each folder

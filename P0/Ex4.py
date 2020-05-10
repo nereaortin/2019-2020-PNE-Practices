@@ -13,4 +13,4 @@ for name in genes: # iterate throw the files in our list GENES
     print("Gene", name)
     for letter in bases:
         print(letter, ":", seq_count_base(seq, letter))
-        # seq_count_base()  function that counts just one base
+        # seq_count_base()  function that counts the base choosen

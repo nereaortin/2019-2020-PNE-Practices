@@ -9,4 +9,4 @@ data = file_contents.split('\n')
 body = data[1:]
 text = "".join(body)
 
-print(len(body))
+print(len(text))

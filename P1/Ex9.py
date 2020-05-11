@@ -1,6 +1,6 @@
 #Session 7. Exercise 9
 
-from Ex1 import Seq  # Seq is the class
+from Seq1 import Seq
 
 print("-----| Practice 1, Exercise 9 |------")
 
@@ -10,7 +10,7 @@ filename = folder + 'U5.txt'
 s = Seq()
 s.read_fasta(filename)
 
-print(f"Sequence : (Length: {s.len()}) {s}")
-print("\tBases: ", s.count())
-print("\tRev: ", s.reverse())
-print("\tComp:", s.complement())
+print("Sequence: (Lenght:", s.len(), ")", s)
+print("  Bases:", s.count())
+print("  Rev: ", s.reverse())
+print("  Comp: ", s.complement())

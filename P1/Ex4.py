@@ -1,16 +1,16 @@
 #Session 7. Exercise 4
 
-from Ex1 import Seq
+from Seq1 import Seq
 
 print("-----| Practice 1, Exercise 4 |------")
 
 #--null sequence
 s1 = Seq()
 
-# -- Create a valid sequence
+# -- valid sequence
 s2 = Seq("ACTGA")
 
-# -- Create an invalid sequence
+# --invalid sequence
 s3 = Seq("Invalid sequence")
 
 

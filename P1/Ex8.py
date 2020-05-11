@@ -1,20 +1,22 @@
 #Session 7. Exercise 8
 
-from Ex1 import Seq  # Seq is the class
+from Seq1 import Seq
 
 print("-----| Practice 1, Exercise 8 |------")
 
 #--null sequence
 s1 = Seq()
 
-# -- Create a valid sequence
+# --valid sequence
 s2 = Seq("ACTGA")
 
-# -- Create an invalid sequence
+# --invalid sequence
 s3 = Seq("Invalid sequence")
 
-for i, s in enumerate([s1, s2, s3]):
-    print("Sequence", i, ": (Lenght:", s.len(), ")", s)
+
+list = [s1, s2, s3]
+for s in list:
+    print("Sequence", list.index(s), ": (Lenght:", s.len(), ")", s)
     print("  Bases:", s.count())
-    print("   Rev: ", s.seq_reverse())
-    print("   Comp: ", s.seq_complement())
+    print("  Rev: ", s.reverse())
+    print("  Comp: ", s.complement())

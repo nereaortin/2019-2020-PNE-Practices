@@ -1,31 +1,26 @@
-from pathlib import Path  # for open a file
+from pathlib import Path #for reading fasta files of session 4
 
-
-def valid_str(strbases):  # self argument is always the first
-    valid_b = ["A", "C", "G", "T"]
-    for b in strbases:
-        if b not in valid_b:  # if there is any invalid base
-            return False
-    return True  # valid
 
 
 class Seq:
     NULL = "NULL"
     ERROR = "ERROR"
 
-    def __init__(self, strbases=NULL):  # function for initializing the object #strsbases: is a parameter, you can
-        # call wherever you want
+    def __init__(self, strbases="NULL"):  # function __init__()for initializing the object
+        # #always self to operate with the object
         if strbases == self.NULL:
+            #create an object null
+            print("NULL seq created")
             self.strbases = self.NULL
-            print("NULL sequence created")
             return
 
         if not valid_str(strbases):
-            self.strbases = self.ERROR  # you have always have to put self to operate with an object
+            #create an object invalid
             print("INVALID Seq!")
+            self.strbases = self.ERROR
             return
 
-        # string in the object
+        #this step is reached when the object is a string of valid bases
         self.strbases = strbases
         print("New sequence created!")
 
@@ -33,52 +28,50 @@ class Seq:
         return self.strbases  # it gives the internal info of the object
 
     def len(self):
-        if self.strbases in [self.NULL, self.ERROR]:
-            return 0  # a 0 if it is null or invalid
+        if self.strbases == self.NULL or self.strbases == self.ERROR: #returns length 0 for null and invalid
+            return 0
         else:
             return len(self.strbases)
 
-    def seq_read_fasta(self, filename):
-        #  read the text
-        content = Path(filename).read_text()
-        # Remove the head
-        body = content.split('\n')[1:]
+    def valid_str(strbases):  # checks that all the elements in the seq are valid bases
+        valid = ["A", "C", "G", "T"]
+        for element in strbases:
+            if element not in valid:  # if is an invalid base
+                return False
+        return True  # if is valid
 
-        # Store the sequence
-        self.strbases = "".join(body)
+    def read_fasta(self, filename):
+        content = Path(filename).read_text() #all the content of the file
+        body = content.split('\n')[1:] #just the body of the file without the head
+        self.strbases = "".join(body) #create an object with the body sequence
 
         return self
 
-    def seq_count_bases(self, b):  # it applies to the dictionary,
+    def count_base(self, b):
         return self.strbases.count(b)
 
-    def count(self):  # times that a base is repited
-        e = {"A": self.seq_count_bases("A"), 'T': self.seq_count_bases('T'),
-             'C': self.seq_count_bases('C'), 'G': self.seq_count_bases('G')}
+    def count(self):  # creates a dictionary with the count of each base in the seq
+        dic_base = {'A': self.count_base('A'), 'T': self.count_base('T'),
+             'C': self.count_base('C'), 'G': self.count_base('G')}
 
-        return e
+        return dic_base
 
-    def seq_reverse(self):
-        if self.strbases in [self.NULL]:
+    def reverse(self):#function that returns the reverse of only the valid seq
+        if self.strbases == self.NULL:#for the null and invalid returns the object
             return "NULL"
-        elif self.strbases in [self.ERROR]:
+        elif self.strbases == self.ERROR:
             return "ERROR"
         else:
             return self.strbases[::-1]
 
-    def seq_complement(self):
-        e = {"A": "T", 'T': 'A', 'C': 'G', 'G': 'C'}
-        es = ""
-        if self.strbases in [self.NULL]:
+    def complement(self):
+        dic_com = {"A": "T", 'T': 'A', 'C': 'G', 'G': 'C'}
+        str_com = ""
+        if self.strbases == self.NULL:
             return "NULL"
-        elif self.strbases in [self.ERROR]:
+        elif self.strbases == self.ERROR:
             return "ERROR"
         else:
-
             for b in self.strbases:
-                es += e[b]
-
-        return es
-
-    def seq_count_base(self, param):
-        pass
+                str_com += dic_com.get(b)
+        return str_com

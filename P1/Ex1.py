@@ -1,7 +1,7 @@
 #Session 7. Exercise 1
 
-#create sequence passing a string to an object
-from Ex1 import Seq
+#import the seq class from seq1 module
+from Seq1 import Seq
 
 
 print("-----| Exercise 1 |------")

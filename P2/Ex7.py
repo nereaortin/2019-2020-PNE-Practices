@@ -4,9 +4,9 @@ from Seq1 import Seq
 
 print(f"-----| Practice 2 Exercise 7 |------")
 
-IP = "10.9.27.156"
-PORT1 = 8080
-PORT2 = 8081
+IP = "192.168.1.115"
+PORT1 = 8081
+PORT2 = 8082
 
 FOLDER = "../Session-04/"
 EXT = ".txt"
@@ -20,23 +20,21 @@ print(c1)
 print(c2)
 
 # Read the Gene from a file
-s = Seq().seq_read_fasta(FOLDER + GENE + EXT)
-
-bases = str(s)
+s = Seq().read_fasta(FOLDER + GENE + EXT)
+str_seq = str(s)
 
 # Print the Gene
-print(f"Gene {GENE}: {bases}")
+print(f"Gene {GENE}: {str_seq}")
 
-LENGTH = 10
+lenght = 10
 
-# initial message to both servers
-initial_msg = f"Sending {GENE} Gene to the server, in fragments of {LENGTH} bases..."
+# first message to both servers
+first_msg = f"Sending {GENE} Gene to the server, in fragments of {lenght} bases..."
 
-c1.talk(initial_msg)
-c2.talk(initial_msg)
+c1.talk(first_msg)
+c2.talk(first_msg)
 
-# Create the framents
-# sending them to the servers
+# Create the fragments and sending them to both servers
 for i in range(10):
 
     fragment = bases[i * 10:(i + 1) * 10]

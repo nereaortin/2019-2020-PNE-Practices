@@ -1,28 +1,30 @@
 import socket
 
 # SERVER IP, PORT
-PORT = 8080
-IP = "10.9.27.156"
+PORT = 8081
+IP = "192.168.1.115"
 
 # -- Create the socket
 s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 
 s.bind((IP, PORT))
 
-s.listen(50)
+s.listen(6)
 while True:
+    # accepting the request of the clients
+    # clientsocket is the conexion
     (clientsocket, address) = s.accept()
 
     # read the message from the client
-    m = clientsocket.recv(2100)
+    # the server waits the message to arrive
+    msg = clientsocket.recv(2080).decode("utf-8")
+    print("Message from the client: {}".format(msg))
 
-    print("Message from the client: ", end="")
-
-    message = "\n the server\n"
+    # send a message
+    message = "Hello from Nerea´s server"
     send_bytes = str.encode(message)
-
     # We must write bytes, not a string
     clientsocket.send(send_bytes)
 
-    # -- Finish the connection
+    # Finish the connection
     clientsocket.close()

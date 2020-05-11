@@ -4,23 +4,22 @@ import socket
 import termcolor
 
 
-def ping():
-    print("OK!")
-
-
 class Client:
 
-    def __init__(self, ip, port):
+    def __init__(self, ip, port): #creates objects ip and port
 
         self.ip = ip
         self.port = port
 
-    def __str__(self):
+    @staticmethod
+    def ping():
+        print("OK!")
+
+    def __str__(self): #prints the objects ip and port
         return f"Connection to SERVER at {self.ip} , PORT: {self.port}"
 
     def talk(self, msg):
         # -- Create the socket
-
         s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 
         # establish the connection to the Server (IP, PORT)
@@ -28,7 +27,6 @@ class Client:
 
         # Send data.
         s.send(str.encode(msg))
-
 
         # Receive data
         response = s.recv(2048).decode("utf-8")
@@ -39,8 +37,10 @@ class Client:
         # Return the response
         return response
 
-    def debug_talk(self, m_from_server):
-        m_from_server = self.talk(m_from_server)
+    def debug_talk(self, msg_client):
+        msg_server = self.talk(msg_client)
+        print("To Server:", end="")
+        termcolor.cprint(msg_client, "blue")
         print("From Server: ", end="")
-        termcolor.cprint(m_from_server, "green")
-        return m_from_server
+        termcolor.cprint(msg_server, "green")
+        return msg_server

@@ -4,7 +4,7 @@ import socket
 
 # SERVER IP, PORT
 PORT = 8080
-IP = "212.168.111.134"
+IP = "192.168.1.115"
 
 # -- Create the socket
 s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
@@ -19,7 +19,7 @@ while True:
 
     # read the message from the client
     # the server waits the message to arrive
-    m = clientsocket.recv(2080).decode("utf-8")
+    msg = clientsocket.recv(2080).decode("utf-8")
     print("Message from the client: {}".format(msg))
 
     #send a message

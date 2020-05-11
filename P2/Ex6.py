@@ -4,7 +4,7 @@ from Seq1 import Seq
 
 print(f"-----| Practice 2 Exercise 6 |------")
 
-IP = "10.9.27.156"
+IP = "192.168.1.115"
 PORT = 8080
 
 FOLDER = "../Session-04/"
@@ -18,18 +18,15 @@ c = Client(IP, PORT)
 print(c)
 
 # Read the Gene from a file
-s = Seq().seq_read_fasta(FOLDER + GENE + EXT)
-
-# get the string
-
-bases = str(s)
+s = Seq().read_fasta(FOLDER + GENE + EXT)
+str_seq = str(s)
 
 lenght = 10
 c.talk(f"Sending {GENE} Gene to the server, in fragments of {lenght} bases...")
 
 for i in range(5):
-    # de 10 en 10
-    fragment = bases[i * 10: (i + 1) * 10]
+    # 5 fragments of 10 bases each one
+    fragment = str_seq[i * 10: (i + 1) * 10]
 
     # Print on Client's console
     print(f"Fragment {i + 1}: {fragment}")

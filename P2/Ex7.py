@@ -37,7 +37,7 @@ c2.talk(first_msg)
 # Create the fragments and sending them to both servers
 for i in range(10):
 
-    fragment = bases[i * 10:(i + 1) * 10]
+    fragment = str_seq[i * 10:(i + 1) * 10]
 
     # Print on Client's console
     print(f"Fragment {i + 1}: {fragment}")
@@ -45,10 +45,10 @@ for i in range(10):
     # Message to send to the server
     msg = f"Fragment {i + 1}: {fragment}"
 
-    # even fragments (counting from 0) are sent to server 1
+    # even fragments to server 1
     if i % 2:
         c2.talk(msg)
 
-    # Odd segments are sent to server 2
+    # Odd fragments to server 2
     else:
         c1.talk(msg)

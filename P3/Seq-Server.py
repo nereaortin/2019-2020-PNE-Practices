@@ -1,5 +1,4 @@
 from Seq1 import Seq
-from Seq0 import *
 
 import socket
 import termcolor
@@ -13,7 +12,7 @@ s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 s.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
 
 IP = "127.0.0.1"
-PORT = 8081
+PORT = 8080
 
 # bind the socket to the servers ip and port
 
@@ -24,11 +23,12 @@ s.listen()
 
 print("Server is configured")
 
-s0 = "TAGCTAGCTAAGCTAAAGCTTGACTAGA"
-s1 = "ACTGACTAGTACGACTCAGCATAGTAGT"
-s2 = "ATGCATTTGACTAGCTAGCATAGAACAT"
-s3 = "ATTTGACATGCTTAGCTGACTAACCCAT"
-s4 = "GTCAGTCAGTCCTGCAGGATCGATCAGA"
+seq0 = "TAGCTAGCTAAGCTAAAGCTTGACTAGA"
+seq1 = "ACTGACTAGTACGACTCAGCATAGTAGT"
+seq2 = "ATGCATTTGACTAGCTAGCATAGAACAT"
+seq3 = "ATTTGACATGCTTAGCTGACTAACCCAT"
+seq4 = "GTCAGTCAGTCCTGCAGGATCGATCAGA"
+list_seq = [seq0, seq1, seq2, seq3, seq4]
 
 while True:
     # waiting for a client
@@ -51,88 +51,89 @@ while True:
         # decode to read it properly
         msg = msg_raw.decode()
 
-        li = msg.split(" ")
+        li_command = msg.split(" ")
+        command = li_command[0]
 
-        if li[0] == "PING":
+        if command == "PING":
             termcolor.cprint("PING command", 'green')
             print("OK!\n")
 
-        elif li[0] == "GET":
+        elif command == "GET":
             termcolor.cprint("GET", 'green')
 
-            if li[1] == "0":
-                print(s0, "\n")
-                response = s0
+            if command[1] == "0":
+                print(list_seq[0], "\n")
+                response = list_seq[0]
                 cs.send(response.encode())
 
-            elif li[1] == "1":
-                print(s1, "\n")
-                response = s1
+            elif command[1] == "1":
+                print(list_seq[1], "\n")
+                response = list_seq[1]
                 cs.send(response.encode())
 
-            elif li[1] == "2":
-                print(s2, "\n")
-                response = s2
+            elif command[1] == "2":
+                print(list_seq[2], "\n")
+                response = list_seq[2]
                 cs.send(response.encode())
 
-            elif li[1] == "3":
-                print(s3, "\n")
-                response = s3
+            elif command[1] == "3":
+                print(list_seq[3], "\n")
+                response = list_seq[3]
                 cs.send(response.encode())
 
-            elif li[1] == "4":
-                print(s4, "\n")
-                response = s4
+            elif command[1] == "4":
+                print(list_seq[4], "\n")
+                response = list_seq[4]
                 cs.send(response.encode())
 
-        elif li[0] == "INFO":
+        elif command[0] == "INFO":
             termcolor.cprint("INFO", 'green')
 
-            sequence = Seq(li[1])
+            sequence = Seq(li_command[1])
             print("Sequence: ", sequence)
             print("Total lenght: ", sequence.len())
-            counta = sequence.seq_count_bases('A')
-            porta = (100 * counta / sequence.len())
-            countc = sequence.seq_count_bases('C')
-            portc = (100 * countc / sequence.len())
-            countg = sequence.seq_count_bases('G')
-            portg = (100 * countg / sequence.len())
-            countt = sequence.seq_count_bases('T')
-            portt = (100 * countt / sequence.len())
+            a_count = sequence.count_base('A')
+            c_count = sequence.count_base('C')
+            g_count = sequence.count_base('G')
+            t_count = sequence.count_base('T')
+            a_percent = (100 * a_count / sequence.len())
+            c_percent = (100 * c_count / sequence.len())
+            g_percent = (100 * g_count / sequence.len())
+            t_percent = (100 * t_count / sequence.len())
 
-            print("A:", counta, "(", round(porta, 2), "%)")
-            print("C:", countc, "(", round(portc, 2), "%)")
-            print("G:", countg, "(", round(portg, 2), "%)")
-            print("T:", countt, "(", round(portt, 2), "%)")
+            print("A:",a_count, "(", round(a_percent, 2), "%)")
+            print("C:", c_count, "(", round(c_percent, 2), "%)")
+            print("G:", g_count, "(", round(g_percent, 2), "%)")
+            print("T:", t_count, "(", round(t_percent, 2), "%)")
 
             response = f"""Sequence: {sequence}
             Total length: {sequence.len()}
-            A: {counta} ({round(porta,2)}%)
-            C: {countc} ({round(portc,2)}%)
-            G: {countg} ({round(portg,2)}%)
-            T: {countt} ({round(portt,2)}%)"""
+            A: {a_count} ({round(a_percent,2)}%)
+            C: {c_count} ({round(c_percent,2)}%)
+            G: {g_count} ({round(g_percent,2)}%)
+            T: {t_count} ({round(t_percent,2)}%)"""
             cs.send(response.encode())
 
-        elif li[0] == "COMP":
+        elif command[0] == "COMP":
             termcolor.cprint("COMP", 'green')
-            sequence = Seq(li[1])
-            comp = sequence.seq_complement()
-            print(comp)
-            cs.send(comp.encode())
+            sequence = Seq(li_command[1])
+            complement_seq = sequence.complement()
+            print(complement_seq)
+            cs.send(complement_seq.encode())
 
 
-        elif li[0] == "REV":
+        elif command[0] == "REV":
             termcolor.cprint("REV", 'green')
-            sequence = Seq(li[1])
-            rev = sequence.seq_reverse()
-            cs.send(rev.encode())
+            sequence = Seq(li_command[1])
+            reverse_seq = sequence.reverse()
+            cs.send(reverse_seq.encode())
 
-        elif li[0] == "GENE":
+        elif command[0] == "GENE":
             termcolor.cprint("GENE", 'green')
-            gene = li[1]
+            gene = li_command[1]
             folder = "../session-04/"
-            e = ".txt"
-            seq = seq_read_fasta(folder + gene + e)
+            ext = ".txt"
+            seq = read_fasta(folder + gene + ext)
             print(seq)
             cs.send(seq.encode())
 

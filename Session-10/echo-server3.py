@@ -9,7 +9,7 @@ ls.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
 
 # Configure the Server's IP and PORT
 PORT = 8080
-IP = "192.168.124.179"
+IP = "192.168.1.115"
 
 # -- Step 1: create the socket
 ls = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
@@ -23,15 +23,15 @@ ls.bind((IP, PORT))
 # -- Step 3: Configure the socket for listening
 ls.listen()
 
-# -- Variable for counting the number of connections
-num_connections = 0
+# -- to count number of connections to this server
+number_connect = 0
 
-# -- List for storing info about clients
+# -- List for storing ip and port of each clients
 client_list = []
 
 print("The server is configured!")
 
-while num_connections < 5:
+while number_connect < 5:
     # -- Waits for a client to connect
     print("Waiting for Clients to connect")
 
@@ -42,7 +42,7 @@ while num_connections < 5:
     except KeyboardInterrupt:
         print("Server stopped by the user")
 
-        # -- Close the listenning socket
+        # -- Close the listening socket
         ls.close()
 
         # -- Exit!
@@ -51,11 +51,10 @@ while num_connections < 5:
     # -- Execute this part if there are no errors
     else:
 
-        # -- New client
-        # -- Increment the counter
-        num_connections += 1
 
-        print(f"CONNECTION {num_connections}. Client IP,PORT: {client_ip_port}")
+        number_connect += 1
+
+        print(f"CONNECTION {number_connect}. Client IP,PORT: {client_ip_port}")
 
         # -- Store the client address in the list
         client_list.append(client_ip_port)
@@ -73,7 +72,7 @@ while num_connections < 5:
         termcolor.cprint(msg, "green")
 
         # -- Send a response message to the client
-        response = "ECHO: " + msg + "\n"
+        response = "ECHO: " + msg
 
         # -- The message has to be encoded into bytes
         cs.send(response.encode())
@@ -83,8 +82,8 @@ while num_connections < 5:
 
 # -- Show the information of the clients
 print("The following clients has connected to the server: ")
-for i, c in enumerate(client_list):
-    print(f"Client {i}: {c}")
+for element in client_list:
+    print("Client", client_list.index(element),":",element)
 
 # -- Close the socket
 ls.close()

@@ -2,7 +2,7 @@ import socket
 
 # Configure the Server's IP and PORT
 PORT = 8080
-IP = "192.168.1.37"
+IP = "192.168.1.115"
 
 # -- Step 1: create the socket
 ls = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
@@ -29,7 +29,7 @@ while True:
     except KeyboardInterrupt:
         print("Server stopped by the user")
 
-        # -- Close the listenning socket
+        # -- Close the listening socket
         ls.close()
 
         # -- Exit!
@@ -43,7 +43,7 @@ while True:
         msg_raw = cs.recv(2048)
 
         # -- We decode it for converting it
-        # -- into a human-redeable string
+        # -- into a human-readable string
         msg = msg_raw.decode()
 
         # -- Print the received message

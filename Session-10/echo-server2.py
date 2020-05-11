@@ -3,7 +3,7 @@ import termcolor
 
 # Configure the Server's IP and PORT
 PORT = 8080
-IP = "192.168.1.37"
+IP = "192.168.1.115"
 
 # -- Step 1: create the socket
 ls = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
@@ -16,6 +16,9 @@ ls.bind((IP, PORT))
 
 # -- Step 3: Configure the socket for listening
 ls.listen()
+
+# -- to count number of connections to this server
+number_connect = 0
 
 print("The server is configured!")
 
@@ -30,28 +33,30 @@ while True:
     except KeyboardInterrupt:
         print("Server stopped by the user")
 
-        # -- Close the listenning socket
+        # -- Close the listening socket
         ls.close()
 
         # -- Exit!
         exit()
     else:
+        number_connect += 1
 
-        print("A client has connected to the server!")
+        # -- to count number of connections to this server
+        print(f"CONNECTION {number_connect}. Client IP,PORT: {client_ip_port}")
 
         # -- Read the message from the client
         # -- The received message is in raw bytes
         msg_raw = cs.recv(2048)
 
         # -- We decode it for converting it
-        # -- into a human-redeable string
+        # -- into a human-readable string
         msg = msg_raw.decode()
 
         # -- Print the received message
         termcolor.cprint(f"Message received: {msg}")
 
         # -- Send a response message to the client
-        response = "ECHO: " + msg + "\n"
+        response = "ECHO: " + msg
 
         # -- The message has to be encoded into bytes
         cs.send(response.encode())

@@ -1,19 +1,11 @@
-import pathlib
 import socket
 import termcolor
+from pathlib import Path
+
 
 # -- Server network parameters
-IP = "194.167.0.20"
+IP = "127.0.0.1"
 PORT = 8080
-FOLDER = "../Session-12/"
-FILENAME = "Index.html"
-
-
-def read_fasta(filename):
-    # -- Open and read the file
-    file_contents = pathlib.Path(filename).read_text().split("\n")[1:]
-    body = "".join(file_contents)
-    return body
 
 
 def process_client(s):
@@ -40,7 +32,8 @@ def process_client(s):
     # Body (content to send)
 
     # This new contents are written in HTML language
-    body = read_fasta(FOLDER + FILENAME)
+    body = Path("index.html").read_text()
+
     # -- Status line: We respond that everything is ok (200 code)
     status_line = "HTTP/1.1 200 OK\n"
 
@@ -51,7 +44,7 @@ def process_client(s):
     header += f"Content-Length: {len(body)}\n"
 
     # -- Build the message by joining together all the parts
-    response_msg = status_line + header + "\n" + body
+    response_msg = status_line + header + "\r\n" + body
     cs.send(response_msg.encode())
 
 

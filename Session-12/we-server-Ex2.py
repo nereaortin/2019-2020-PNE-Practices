@@ -1,8 +1,9 @@
+#in this example we end up with the conclusion that is important to specify the type of content correctly
 import socket
 import termcolor
 
 # -- Server network parameters
-IP = "194.167.0.20"
+IP = "127.0.0.1"
 PORT = 8080
 
 

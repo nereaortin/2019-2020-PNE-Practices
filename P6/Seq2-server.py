@@ -1,7 +1,7 @@
 import http.server
+from pathlib import Path
 import socketserver
 import termcolor
-from pathlib import Path
 from Seq1 import Seq
 
 # Define the Server's port
@@ -13,11 +13,11 @@ socketserver.TCPServer.allow_reuse_address = True
 
 # -- Sequences for the GET command
 SEQ_GET = [
-    "ACCTCCTCTCCAGCAATGCCAACCCCAGTCCAGGCCCCCATCCGCCCAGGATCTCGATCA",
-    "AAAAACATTAATCTGTGGCCTTTCTTTGCCATTTCCAACTCTGCCACCTCCATCGAACGA",
-    "CAAGGTCCCCTTCTTCCTTTCCATTCCCGTCAGCTTCATTTCCCTAATCTCCGTACAAAT",
-    "CCCTAGCCTGACTCCCTTTCCTTTCCATCCTCACCAGACGCCCGCATGCCGGACCTCAAA",
-    "AGCGCAAACGCTAAAAACCGGTTGAGTTGACGCACGGAGAGAAGGGGTGTGTGGGTGGGT",
+    "ACCTCCTCTCCAGCAATGCCAACCCCAGTCCGCCTCA",
+    "AAAAACATTAATCTGTGGCCTTTCTACTCTGCCACGA",
+    "CAAGGTCCCCTTCTTCCTTTCCATTCTTTCCCTAAAT",
+    "CCCTAGCCTGACTCCCTTTCCTTTCCATCCTCTCAAA",
+    "AGCGCAAACGCTAAAAACCGGTTGAGTTGACGCGGGT",
 ]
 
 FOLDER = "../Session-04/"
@@ -38,26 +38,26 @@ class TestHandler(http.server.BaseHTTPRequestHandler):
         # Analize the request line
         req_line = self.requestline.split(' ')
 
-        # Get the path. It always start with the / symbol
+        # Take the path info
         path = req_line[1]
 
-        # Read the arguments
+        # Separate the path from the rest of the request line
         arguments = path.split('?')
 
-        # Get the verb. It is the first argument
-        verb = arguments[0]
+        # we take the service names from the path
+        action = arguments[0]
 
         # -- Content type header
         # -- Both, the error and the main page are in HTML
         contents = Path('Error.html').read_text()
         error_code = 404
 
-        if verb == "/":
+        if action == "/":
             # Open the form1.html file
             # Read the index from the file
             contents = Path('form-4.html').read_text()
             error_code = 200
-        elif verb == "/ping":
+        elif action == "/ping":
             contents = """
             <!DOCTYPE html>
             <html lang = "en">
@@ -73,7 +73,7 @@ class TestHandler(http.server.BaseHTTPRequestHandler):
             </html>
             """
             error_code = 200
-        elif verb == "/get":
+        elif action == "/get":
             # -- Get the argument to the right of the ? symbol
             pair = arguments[1]
             # -- Get all the pairs name = value
@@ -101,7 +101,7 @@ class TestHandler(http.server.BaseHTTPRequestHandler):
                         </html>
                         """
             error_code = 200
-        elif verb == "/gene":
+        elif action == "/gene":
             # -- Get the argument to the right of the ? symbol
             pair = arguments[1]
             # -- Get all the pairs name = value
@@ -130,7 +130,7 @@ class TestHandler(http.server.BaseHTTPRequestHandler):
                         </html>
                         """
             error_code = 200
-        elif verb == "/operation":
+        elif action == "/operation":
             # -- Get the argument to the right of the ? symbol
             pair = arguments[1]
             # -- Get all the pairs name = value

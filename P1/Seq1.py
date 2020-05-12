@@ -1,6 +1,12 @@
 from pathlib import Path #for reading fasta files of session 4
 
 
+def valid_str(strbases):  # checks that all the elements in the seq are valid bases
+    valid = ["A", "C", "G", "T"]
+    for element in strbases:
+        if element not in valid:  # if is an invalid base
+            return False
+    return True  # if is valid
 
 class Seq:
     NULL = "NULL"
@@ -33,12 +39,6 @@ class Seq:
         else:
             return len(self.strbases)
 
-    def valid_str(strbases):  # checks that all the elements in the seq are valid bases
-        valid = ["A", "C", "G", "T"]
-        for element in strbases:
-            if element not in valid:  # if is an invalid base
-                return False
-        return True  # if is valid
 
     def read_fasta(self, filename):
         content = Path(filename).read_text() #all the content of the file

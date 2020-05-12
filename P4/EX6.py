@@ -1,17 +1,11 @@
-import pathlib
 import socket
 import termcolor
+import pathlib
 
 # -- Server network parameters
 IP = "127.0.0.1"
 PORT = 8080
 
-
-def read_fasta(filename):
-    # -- Open and read the file
-    file_contents = pathlib.Path(filename).read_text().split("\n")[1:]
-    body = "".join(file_contents)
-    return body
 
 
 def process_client(s):
@@ -36,25 +30,34 @@ def process_client(s):
     # header
     # blank line
     # Body (content to send)
+    def read_html(filename): #read_html() function returns the body of the html file
+        # -- Open and read the file
+        file_contents = pathlib.Path(filename).read_text().split("\n")[1:]
+        body = "".join(file_contents)
+        return body
 
-    FOLDER = "../P4/"
-    file_request = req_line.split()[1]
-    # file_request is like req_line (GET /info/A HTTP/1.1) only with (/info/A), (/info/C) , (/)....
+    folder = "../P4/"
+    path_request = req_line.split()[1]
+    # path_request gets from the req_line (GET /info/A HTTP/1.1) only the path (/info/A) or  (/info/C)
 
-    if file_request == "/":
+    if "/" == path_request:
         filename = "index.html"
-    elif "/info/A" in file_request:
+        body = read_html(folder + filename)
+    elif "/info/A" == path_request:
         filename = "A.html"
-    elif "/info/C" in file_request:
+        body = read_html(folder + filename)
+    elif "/info/C" == path_request:
         filename = "C.html"
-    elif "/info/G" in file_request:
+        body = read_html(folder + filename)
+    elif "/info/G" == path_request:
         filename = "G.html"
-    elif "/info/T" in file_request:
+        body = read_html(folder + filename)
+    elif "/info/T" == path_request:
         filename = "T.html"
+        body = read_html(folder + filename)
     else:
-        filename = "error.html"
-
-    body = read_fasta(FOLDER + filename)
+        filename = "Error.html"
+        body = read_html(folder + filename)
 
     # This new contents are written in HTML language
     # -- Status line: We respond that everything is ok (200 code)

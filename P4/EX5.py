@@ -40,6 +40,7 @@ def process_client(s):
     path_request = req_line.split()[1]
     # path_request gets from the req_line (GET /info/A HTTP/1.1) only the path (/info/A) or  (/info/C)
 
+
     if "/info/A" == path_request:
         filename = "A.html"
         body = read_html(folder + filename)

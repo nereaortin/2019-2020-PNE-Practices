@@ -10,11 +10,6 @@ PORT = 8080
 socketserver.TCPServer.allow_reuse_address = True
 
 
-def read_file(filename):  # read_file() is the function read_fasta_data() from other practice
-    # -- Open and read the file
-    file_contents = pathlib.Path(filename).read_text().split("\n")[1:]
-    body = "".join(file_contents)
-    return body
 
 
 # Class with our Handler. It is a called derived from BaseHTTPRequestHandler
@@ -28,29 +23,27 @@ class TestHandler(http.server.BaseHTTPRequestHandler):
         # Print the request line
         termcolor.cprint(self.requestline, 'green')
 
-        # ----------------------------------------------------------------------------------
-        # Modifications for Exercise 2
+        def read_html(filename):  # read_html() function returns the body of the html file
+            # -- Open and read the file
+            file_contents = pathlib.Path(filename).read_text().split("\n")[1:]
+            body = "".join(file_contents)
+            return body
 
         # Message to send back to the client:
-        FOLDER = "../Session-14/"
+        folder = "../Session-14/"
         if self.path == "/" or self.path == "/index.html":
             file = "index.html"
+            self.send_response(200)  # Status line: OK!
         else:
-            file = "error.html"
+            file = "Error.html"
+            self.send_response(404)  # Status line: ERROR NOT FOUND
 
-        contents = read_file(FOLDER + file)  # read_file() is the function read_fasta_data() from other practice
-
-        # Generating the response message
-        if self.path == "/" or self.path == "/index.html":
-            self.send_response(200)  # -- Status line: OK!
-        else:
-            self.send_response(404)  # -- Status line: ERROR NOT FOUND
+        contents = read_html(folder + file)
 
         # Define the content-type header:
-        self.send_header('Content-Type', 'text/html')  # Changed form text\plain to text text\html
+        self.send_header('Content-Type', 'text/html')  # now we have to specify the type text\html
         self.send_header('Content-Length', len(contents.encode()))
 
-        # ----------------------------------------------------------------------------------
 
         # The header is finished
         self.end_headers()

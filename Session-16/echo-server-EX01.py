@@ -21,6 +21,7 @@ class TestHandler(http.server.BaseHTTPRequestHandler):
         # Print the request line
         termcolor.cprint(self.requestline, 'green')
 
+        #this is the hmtl file we get when the server submit a str in the main page
         body = f"""
         <!DOCTYPE html>
         <html lang="en" dir="ltr">
@@ -38,22 +39,23 @@ class TestHandler(http.server.BaseHTTPRequestHandler):
         if self.path == "/":
             file = "form-EX01.html"
             contents = Path(file).read_text()
-            self.send_response(200)  # -- Status line: OK!
+            self.send_response(200)
 
-        # self.path = /echo?msg=hola HTTP/1.1
-        # self.path[:self.path.find("?")] gets all the characters of the string until "?" so  , "/echo"
-        # self.path[self.path.find("=") + 1:] returns the characters from "=" to the end so , "hola"
+        # self.path = /echo?msg=abc HTTP/1.1
 
         elif "/echo" == self.path[:self.path.find("?")]:
+            # self.path[:self.path.find("?")] gets all the characters of the string until "?" so  , "/echo"
             msg = self.path[self.path.find("=") + 1:]
+            # self.path[self.path.find("=") + 1:] returns the characters from "=" to the end so , "abc"
 
             contents = body[0:body.find("<p>") + 3] + msg + body[body.find("</p>"):]
-            self.send_response(200)  # -- Status line: OK!
+            #introduce the message in the body of the html file
+            self.send_response(200)
 
         else:
             file = "Error.html"
             contents = Path(file).read_text()
-            self.send_response(404)  # -- Status line: ERROR NOT FOUND
+            self.send_response(404)
 
         # Generating the response message
         # Define the content-type header:

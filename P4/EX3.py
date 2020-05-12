@@ -8,8 +8,6 @@ PORT = 8080
 
 
 
-
-
 def process_client(s):
     # -- Receive the request message
     req_raw = s.recv(2000)

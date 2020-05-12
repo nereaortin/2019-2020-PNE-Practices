@@ -2,7 +2,7 @@
 <html lang="en">
   <head>
     <meta charset="utf-8">
-    <title>Exercise 3</title>
+    <title>Exercise 4</title>
   </head>
   <body>
     <h1>SEQ2 server</h1>
@@ -35,6 +35,18 @@
       </select>
       <input type="submit" value="GENE">
     </form>
-
+  <hr>
+  <form action="operation" method="get">
+    Write a sequence: <input type="text" name="seq">
+    <br>
+    Select operation
+    <input type="radio" name="op" value="info" checked> Info
+    <input type="radio" name="op" value="comp"> Comp
+    <input type="radio" name="op" value="rev"> Rev
+    <br>
+    Perform operation:
+    <input type="submit" value="OPERATE!">
+  </form>
+  <hr>
   </body>
 </html>

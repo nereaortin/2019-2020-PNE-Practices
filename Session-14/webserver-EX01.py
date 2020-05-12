@@ -20,21 +20,14 @@ class TestHandler(http.server.BaseHTTPRequestHandler):
         # Print the request line
         termcolor.cprint(self.requestline, 'green')
 
-        # ----------------------------------------------------------------------------------
-        # Modifications for Exercise 1
-
         # Message to send back to the client:
         if self.path == "/":
             contents = "Welcome to my server "
+            self.send_response(200)  # Status line: OK!
         else:
             contents = "Resource not available"
+            self.send_response(404)  # Status line: ERROR NOT FOUND
 
-        # Generating the response message
-        if self.path == "/":
-            self.send_response(200)  # -- Status line: OK!
-        else:
-            self.send_response(404)  # -- Status line: ERROR NOT FOUND
-        # ----------------------------------------------------------------------------------
 
         # Define the content-type header:
         self.send_header('Content-Type', 'text/plain')

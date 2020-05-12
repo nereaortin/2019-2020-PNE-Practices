@@ -29,26 +29,24 @@ class TestHandler(http.server.BaseHTTPRequestHandler):
         path = req_line[1]
 
         # It contains the resource name without the / symbol
-        # If this string is blank "", it means the main page
-        path = path[1:]
+
+        html_name = path[1:]
 
         # -- Content type header
         # -- Both, the error and the main page are in HTML
         content_type = 'text/html'
 
-        print(path)
+        print(html_name)
 
-        if path == "":
-            path = "index.html"
+        if html_name == "":
+            html_name = "index.html"
 
         # -- Read the resource as a file
         try:
-            contents = Path(path).read_text()
+            contents = Path(html_name).read_text()
             status = 200
         except FileNotFoundError:
             contents = Path("Error.html").read_text()
-
-            # Status code is NOT FOUND
             status = 404
 
         # Generating the response message

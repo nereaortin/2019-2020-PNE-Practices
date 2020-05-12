@@ -37,16 +37,12 @@ class TestHandler(http.server.BaseHTTPRequestHandler):
         """
 
         if self.path == "/":
-
             file = "form-EX02.html"
-
             contents = Path(file).read_text()
-
-            self.send_response(200)  # -- Status line: OK!
+            self.send_response(200)
 
         # self.path = /echo?msg=hola&chk=on HTTP/1.1
         # self.path[:self.path.find("?")] gets all the characters of the string until "?" so  , "/echo"
-
         # chk = self.path[self.path.find("chk") + 4:] returns after "chk="  on
 
         elif "/echo" == self.path[:self.path.find("?")]:
@@ -54,20 +50,21 @@ class TestHandler(http.server.BaseHTTPRequestHandler):
             chk = self.path[self.path.find("chk") + 4:]
 
             if "chk" in self.path and "on" == chk:
+                #chk appears when a change to capital letters is requested
                 msg = self.path[self.path.find("msg") + 4: self.path.find("&")]
-                msg_converted = msg.upper()
+                msg_converted = msg.upper() #you convert the msg into capital letters
 
-            else:
+            else: #when a msg is sent without capital letter option
                 msg = self.path[self.path.find("msg") + 4:]
                 msg_converted = msg
 
             contents = body[0:body.find("<p>") + 3] + msg_converted + body[body.find("</p>"):]
-            self.send_response(200)  # -- Status line: OK!
+            self.send_response(200)
 
         else:
             file = "Error.html"
             contents = Path(file).read_text()
-            self.send_response(404)  # -- Status line: ERROR NOT FOUND
+            self.send_response(404)
 
         # Generating the response message
         # Define the content-type header:

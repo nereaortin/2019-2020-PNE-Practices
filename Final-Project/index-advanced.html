@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>API REST</title>
+</head>
+<body style="background-color: pink;">
+    <h1>Browsing Human and Vertebrate Genome</h1>
+    <h2>BASIC Level services</h2>
+    <p>JSON Server. My API REST is: </p>
+    <ul>
+        <li>GET listSpecies
+            <form action="listSpecies" method="get">
+                <p>
+                    Limit:
+                    <input type="text" name="limit">
+                    <br><br>
+                    JSON:
+                    <input type="checkbox" name="json" value="1">
+                    <input type="submit" value="SEND">
+                </p>
+            </form>
+        </li>
+        <li>GET karyotype
+            <form action="karyotype" method="get">
+                <p>
+                    Select the species
+                    <input type="text" name="specie">
+                    <br><br>
+                    JSON:
+                    <input type="checkbox" name="json" value="1">
+                    <input type="submit" value="SEND">
+                </p>
+            </form>
+        </li>
+        <li>GET chromosomeLength
+            <form action="chromosomeLength" method="get">
+                <p>
+                    Select the species
+                    <input type="text" name="specie">
+                    <br><br>
+                    Select the chromosome
+                    <input type="text" name="chromo">
+                    <br><br>
+                    JSON:
+                    <input type="checkbox" name="json" value="1">
+                    <input type="submit" value="SEND">
+                </p>
+            </form>
+        </li>
+        <li>GET geneSeq
+            <form action="geneSeq" method="get">
+                <p>
+                    Select the gene
+                    <input type="text" name="gene">
+                    <br><br>
+                    JSON:
+                    <input type="checkbox" name="json" value="1">
+                    <input type="submit" value="SEND">
+                </p>
+            </form>
+        </li>
+        <li>GET geneInfo
+            <form action="geneInfo" method="get">
+                <p>
+                    Select the gene
+                    <input type="text" name="gene">
+                    <br><br>
+                    JSON:
+                    <input type="checkbox" name="json" value="1">
+                    <input type="submit" value="SEND">
+                </p>
+            </form>
+        </li>
+        <li>GET geneCalc
+            <form action="geneCalc" method="get">
+                <p>
+                    Select the gene
+                    <input type="text" name="gene">
+                    <br><br>
+                    JSON:
+                    <input type="checkbox" name="json" value="1">
+                    <input type="submit" value="SEND">
+                </p>
+            </form>
+        </li>
+        <li>GET geneList
+            <form action="geneList" method="get">
+                <p>
+                    Select the chromosome
+                    <input type="text" name="chromo">
+                    <br><br>
+                    Select where it starts
+                    <input type="text" name="start">
+                    <br><br>
+                    Select where it ends
+                    <input type="text" name="end">
+                    <br><br>
+                    JSON:
+                    <input type="checkbox" name="json" value="1">
+                    <input type="submit" value="SEND">
+                </p>
+            </form>
+        </li>
+    </ul>
+
+</body>
+</html>

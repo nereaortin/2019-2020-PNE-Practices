@@ -1,286 +1,425 @@
 import http.server
+import http.client
 import socketserver
 import termcolor
 import json
-import http.client
 from pathlib import Path
 from Seq1 import Seq
 
-# Server's Port
+#Servers port
 PORT = 8080
+server = "https://rest.ensembl.org"
+IP = "localhost"
+
 
 # -- This is for preventing the error: "Port already in use"
 socketserver.TCPServer.allow_reuse_address = True
 
 
-# -- Server used for the project
-server = 'rest.esembl.org'
-params = '?content-type=application/json'
+
+
+final_message = f"""
+    <a href="http://127.0.0.1:8080/">Main Page </a>
+</body>
+</html> """
+
+
+def get_info(endpoint):
+
+    try:
+        conn.request("GET", endpoint + '?content-type=application/json')
+
+    except ConnectionRefusedError:
+        print("ERROR! Cannot connect to the Server")
+        exit()
+    # -- Read the response message from the server
+    r1 = conn.getresponse()
+
+    # -- Read the response's body
+    data1 = r1.read().decode()
+
+    # -- Create a variable with the data from the JSON received
+    info = json.loads(data1)
+    return info
+
+
+def get_sequence(id_gene):
+    server4 = "rest.ensembl.org"
+    endpoint = "/sequence/id"
+    params = "/" + id_gene + "?content-type=application/json"
+    conn = http.client.HTTPConnection(server4)
+
+    try:
+        conn.request("GET", endpoint + params)
+    except ConnectionRefusedError:
+        print("ERROR! Cannot connect to the Server")
+        exit()
+    response = conn.getresponse()
+    data1 = response.read().decode("utf-8")
+    data = json.loads(data1)
+    seq = data["seq"]
+    return seq
+
+
+def percentages(seq):
+    count_bases = seq.count()
+    length = seq.len()
+    listvalues = list(count_bases.values())
+    listt = []
+    for value in listvalues:
+        listt.append(f"{value} {round(value / length * 100), 2}%")
+    listkeys = list(count_bases.keys())
+    full_dictionary = dict(zip(listkeys, listt))
+    return full_dictionary
+
+
+def list_names(dict_species):
+    counter = 0
+    list_name = []
+    while counter < int(len(dict_species)):
+        animal = dict_species[counter]["common_name"]
+        list_name.append(animal)
+        counter += 1
+    return list_name
+
 
 # Class with our Handler. It is a called derived from BaseHTTPRequestHandler
-# It means that our class inherits all his methods and properties
+# It means that our class inheritates all his methods and properties
+
 class TestHandler(http.server.BaseHTTPRequestHandler):
+
     def do_GET(self):
         """This method is called whenever the client invokes the GET method
         in the HTTP protocol request"""
 
-        # -- Print the request line
+        # Print the request line
         termcolor.cprint(self.requestline, 'green')
 
-        # -- Analyze the request line
-        req_line = self.requestline.split(' ')
+        # Open the form1.html file
+        # Read the index from the file
+        user_line = self.path #request_line por user_line
 
-        # -- Get the path. It always start with the / symbol
-        path = req_line[1]
+        if "json=1" in user_line:
+            real_resource = user_line[:user_line.find("json=1") - 1]
+            content_type = "application/json"
+        else:
+            real_resource = user_line #cambiar nombre real_resource
+            content_type = "text/html"
+        error_code = 200
+        contents = ""
+        line_path = real_resource.split('?') #list_resource por line_path
+        verb = line_path[0] #resource por verb
 
-        # --  Check all the arguments
-        arguments = path.split('?')
-
-        # -- The verb is located as the first argument
-        verb = arguments[0]
-
-        contents = Path('Error.html').read_text()
-        status = 404
-
-        # -- Gives a response depending of the existence of de
-        if verb == '/':
-            # Open index file (HTML)
-            contents = Path('index.html').read_text()
-
-        elif verb == '/listSpecies':
-            # We extract the limit number entered by the user from the arguments:
-            limit = arguments[1]
-
-            # This endpoint lists all available species, their aliases, available adaptor groups and data release.
-            endpoint = "info/species"
-
-            try:
-
-                # Connect with the server
-                conn = http.client.HTTPConnection(server)
-
-                # -- Send the request message, using the GET method. We are
-                # -- requesting the main page (/)
-                try:
-                    conn.request("GET", endpoint + params)
-                except ConnectionRefusedError:
-                    print("ERROR! Cannot connect to the Server")
-                    exit()
-
-                # -- Read the response message from the server
-                response = conn.getresponse()
-
-                # -- Print the status line
-                print(f"Response received!: {response.status} {response.reason}\n")
-
-                # -- Read the response's body:
-                body = response.read().decode("utf-8")
-
-                # -- We convert the body from string to dictionary:
-                all_species_dict = json.loads(body)
-
-                # -- We define the list of all species:
-                all_species_list = []
-
-                # -- We extract the display name of each species from the dictionary. Each species is a element of
-                # -- a list, that is the value of a key called species.
-
-                for k, v in all_species_dict.items():
-                    if k == "species":
-                        for element in v:
-                            for k1, v1 in element.items():
-                                if k1 == "display_name":
-                                    species = v1
-
-                                    # -- We add each species to the list:
-                                    all_species_list.append(species)
-
-                contents = f"""
-                                           <!DOCTYPE html>
-                                           <html lang = "en">
-                                           <head>
-                                           <meta charset = "utf-8" >
-                                               <title>List of species</title >
-                                           </head >
-                                           <body>
-                                           <p>The total number of species in ensembl is: {len(all_species_list)}</p>
-                                           """
-
-                # From limit, we extract the order and the value entered by the user:
-                limit_action = limit.split("=")[0]
-                limit_value = limit.split("=")[1]
-
-                if limit_action == "limit":
-
-                    # In case the user enters a limit value:
-                    if limit_value != "":
-                        contents += f"""<p>The number of species you selected are: {limit_value} </p>"""
-
-                        # Invalid limit values:
-                        if int(limit_value) > len(all_species_list) or int(limit_value) == 0 or int(
-                                limit_value) < 0:
-                            contents = f"""<!DOCTYPE html>
-                                            <html lang = "en">
-                                              <head>
-                                                <meta charset = "utf-8" >
-                                                <title>ERROR</title >
-                                              </head>
-                                                               <body>
-                                                               <p>The limit you have introduced is out of range. Please, introduce a valid limit value</p>
-                                                               </body></html>"""
-                        else:
-                            # We extract the first n species of the list, being n the limit ordered by the user.
-                            limit_species_list = all_species_list[:(int(limit_value))]
-                            contents += f"""<p>The species are: </p>"""
-                            # The species are printed one by one:
-                            for species in limit_species_list:
-                                contents += f"""<p> - {species} </p>"""
-
-                        contents += f"""<a href="/">Main page</a></body></html>"""
-
-                    # In case the user does not enter any limit number, all the species will be displayed:
-                    else:
-                        contents += f"""<p>The number of species you selected is null, so all the species are displayed. </p>
-                                                   <p>The species are: </p>"""
-
-                        # The species are printed one by one:
-                        for species in all_species_list:
-                            contents += f"""<p> - {species} </p>"""
-                        contents += f"""<a href="/">Main page</a></body></html>"""
-
+        if verb == "/":
+            contents_2 = Path("index-advanced.html").read_text()
+            content_type = 'text/html'
+            error_code = 200
+        else:
+            if verb == "/listSpecies":
+                # First things to do
+                limit_info = line_path[1] #line por limit_info
+                limit_number = limit_info[limit_info.find("=") + 1:] #msg por limit_number
+                # Getting the list of species
+                path_endpoint = "/info/species?"
+                a = get_info(path_endpoint)
+                species = a["species"] #list_species por species
+                list_species = list(species)
+                number_species = len(list_species) #total_number por number_species
+                # Seeing what is the number
+                if limit_number == "":
+                    number = number_species
                 else:
-                    contents = Path('Error.html').read_text()
-
-            except ValueError:
-                contents = f"""<!DOCTYPE html>
-                                           <html lang = "en">
-                                           <head>
-                                            <meta charset = "utf-8" >
-                                            <title>ERROR</title >
-                                           </head>
-                                           <body>
-                                           <p>ERROR INVALID VALUE. Introduce an integer value for limit</p>
-                                           <a href="/">Main page</a></body></html>"""
-
-            # Karyotype: Return information about the karyotype of a specie: The name (usually a number) of all the
-            # chromosomes:
-
-            status = 200
-        elif verb == '/karyotype':
-            # -- HTML
-            contents = f"""
+                    number = limit_number
+                contents =f"""
                             <!DOCTYPE html>
                             <html lang = "en">
                             <head>
                             <meta charset = "utf-8" >
-                              <title> GET </title >
+                              <title> List of Species </title >
                             </head >
-                            <body>
-                            <h2>Karyotype</h2>
-                            <p>The names of the chromosomes are:</p>"""
+                            <body style="background-color: ligthgreen;">
+                             The total number of species is: {number_species}
+                             <br>
+                             The limit you have selected is : {number} 
+                             <br>
+                             The names of the species are: 
 
-            status = 200
+                            </body>
+                            </html>
+                            """
+                counter = 0
+                list_animals = []
 
-        elif verb == '/chromosomeLength':
-            # -- Get the argument to the right of the ? symbol
-            pair = arguments[1]
-            # -- Get all the pairs name = value
-            pairs = pair.split('&')
-            # -- Get the two elements: name and value
-            s_name, spce = pairs[0].split('=')
-            ch_index, chr = pairs[1].split('=')
-            # -- Generate the html code
-            contents = f"""
-                                       <!DOCTYPE html>
-                                       <html lang = "en">
-                                       <head>
-                                       <meta charset = "utf-8" >
-                                         <title> GENE </title >
-                                       </head >
-                                       <body>
-                                       <h2> Gene: {gene}</h2>
-                                       <textarea readonly rows="20" cols="80"> {gene_str} </textarea>
-                                       <br>
-                                       <br>
-                                       <a href="/">Main page</a>
-                                       </body>
-                                       </html>
-                                       """
-            status = 200
-        elif verb == '/geneSeq':
-            # -- Get the argument to the right of the ? symbol
-            pair = arguments[1]
-            # -- Get all the pairs name = value
-            pairs = pair.split('&')
-            # -- Get the two elements: name and value, and the operation name w/ the chosen operation
-            name, seq = pairs[0].split('=')
-            o_name, operation = pairs[1].split('=')
-            seq = Seq(seq)
-            if operation == 'Rev':
-                result = seq.reverse()
-            elif operation == 'Comp':
-                result = seq.complement()
-            else:
-                # We calculate the length, amount of bases and the percentage they occupy in the sequence
-                g_len = seq.len()
-                counter = seq.count()
-                per_a = 100 * int(counter['A']) / g_len
-                per_c = 100 * int(counter['C']) / g_len
-                per_t = 100 * int(counter['T']) / g_len
-                per_g = 100 * int(counter['G']) / g_len
-                result = f"""
-                        <p>Total length: {g_len}</p>
-                        <p>A: {counter['A']} ({per_a}%)</p>
-                        <p>C: {counter['C']} ({per_c}%)</p>
-                        <p>G: {counter['T']} ({per_t}%)</p>
-                        <p>T: {counter['G']} ({per_g}%)</p>"""
-            contents = f"""
-                    <!DOCTYPE html>
-                    <html lang = "en">
-                    <head>
-                    <meta charset = "utf-8" >
-                        <title> Operations </title >
-                    </head >
-                    <body>
-                    <h2> Seq:</h2>
-                    <p>{seq}</p>
-                    <h2> Operation: </h2>
-                    <p>{operation}</p>
-                    <h2> Result: </h2>
-                    <p>{result}</p>
-                    <br>
-                    <br>
-                    <a href="/">Main page</a>
-                    </body>
-                    </html>
-                    """
-            status = 200
-        # -- Generating the response message
-        self.send_response(status)
+                if 0 < int(number) <= int(number_species):
+                    # Viewing if it is json or not
+                    while counter < int(number):
+                        if "json=1" in user_line:
+                            list_animals.append(list_species[counter]["animal_name"])
+                            counter += 1
+                            contents_2 = json.dumps({"species": list_animals})
+                        else:
+                            animal = list_species[counter]["animal_name"]
+                            contents += f"<li> {animal} </li>"
+                            counter += 1
+                            contents_2 = contents + f"</ul>" + final_message
+                    error_code = 200
+                else:
+                    contents = Path("Error.html").read_text()
+                    error_code = 404
+            elif verb == "/karyotype":
+                # First things to do
+                line = line_path[1]
+                tittle = "KARYOTYPE OF A SPECIFIC SPECIE"
+                sub_tittle = "Karyotype of a specie"
+                index_eq = line.find("=")
+                msg = line[index_eq + 1:]
+                # Getting the list of species to prove if what you have writen exists
+                ext1 = "/info/species?"
+                ext2 = "/info/assembly/" + msg + "?"
+                a = get_info(ext1)
+                list_species = list(a["species"])
+                list_species = list_names(list_species)
+                if msg in list_species:
+                    contents = f"""
+                            <!DOCTYPE html>
+                            <html lang = "en">
+                            <head>
+                            <meta charset = "utf-8" >
+                              <title> List of Species </title >
+                            </head >
+                            <body style="background-color: ligthgreen;">
+                             The total number of species is: {number_species}
+                             <br>
+                             The limit you have selected is : {number}
+                             <br>
+                             The names of the species are:
 
-        # -- Define the content-type header:
-        content_type = 'text/html'
+                            </body>
+                            </html>
+                            """
+                    # Getting the info of the second endpoint
+                    list_karyotype = get_info(ext2)
+                    list_karyotype = list(list_karyotype["karyotype"])
+                    contents += f"The names of the chromosomes of the specie: {str(msg)}  are: <br><ul>"
+                    if "json=1" in user_line:
+                        contents_2 = json.dumps({"karyotype": list_karyotype})
+                    else:
+                        for karyotype in list_karyotype:
+                            contents += f" <li> {karyotype} </li>"
+                        contents_2 = contents + f"</ul>" + final_message
+                    error_code = 200
+                else:
+                    contents_2 = Path("Error.html").read_text()
+                    error_code = 404
+            elif verb == "/chromosomeLength":
+                # First things to do
+                line = line_path[1]
+                tittle = "LENGTH OF THE SELECTED CHROMOSOME"
+                sub_tittle = "Chromosome Length"
+                index_1 = line.find("=")
+                index_2 = line.find("&")
+                specie = line[index_1 + 1: index_2]
+                # Getting all the species to prove if the specie you have writen exists
+                ext1 = "/info/species?"
+                ext2 = "/info/assembly/" + specie + "?"
+                a = get_info(ext1)
+                list_species = list(a["species"])
+                list_species = list_names(list_species)
+
+                if specie in list_species:
+                    number_1 = line[index_2:]
+                    list_number = number_1.split("=")[1:]
+                    number = 0
+                    for n in list_number:
+                        number = n
+                    # Doing a list to prove if the chromosome exists
+                    list_chromosome = get_info(ext2)
+                    list_chromosome = list(list_chromosome["karyotype"])
+                    if number in list_chromosome:
+                        # Getting the info of the third endpoint
+                        ext3 = "/info/assembly/" + specie + "/" + str(number) + "?"
+                        length_final = get_info(ext3)
+                        length = length_final["length"]
+                        contents = html_folder(tittle, sub_tittle)
+                        if "json=1" in user_line:
+                            contents_2 = json.dumps({"length": str(length)})
+                        else:
+                            contents_2 = contents + f"The length of the chromosome {number} is {str(length)} " \
+                                                 f"<br><br>" + final_message
+                        error_code = 200
+                    else:
+                        contents_2 = Path("Error.html").read_text()
+                        error_code = 404
+                else:
+                    contents_2 = Path("Error.html").read_text()
+                    error_code = 404
+
+            elif verb == "/geneSeq":
+                try:
+                    # First things to do
+                    line = line_path[1]
+                    tittle = "SEQUENCE OF A GENE"
+                    sub_tittle = "The sequence of a human gene"
+                    initial_index = line.find("=")
+                    gene = line[initial_index + 1:]
+                    # Getting the sequence of the gene
+                    ext = "/xrefs/symbol/homo_sapiens/" + gene + "?"
+                    id_gene = get_info(ext)
+                    id_gene = id_gene[0]["id"]
+                    sequence = get_sequence(id_gene)
+                    contents_in = html_folder(tittle, sub_tittle)
+                    contents_in += f"""The sequence of the gene {gene} is:<p><textarea rows = "20" cols= "100" 
+                                style="background-color: lightpink;">{sequence}"""
+                    # Viewing if it is json or not
+                    if "json=1" in user_line:
+                        contents_2 = json.dumps({"sequence": sequence})
+                    else:
+                        contents_2 = contents + f"</textarea></p>" + final_message
+                    error_code = 200
+                except requests.exceptions.HTTPError:
+                    contents_2 = Path("Error.html").read_text()
+                    error_code = 404
+
+            elif verb == "/geneInfo":
+                try:
+                    # First things to do
+                    line = line_path[1]
+                    tittle = "INFO OF A GENE"
+                    sub_tittle = "The information of a human gene"
+                    contents = html_folder(tittle, sub_tittle)
+                    initial_index = line.find("=")
+                    gene = line[initial_index + 1:]
+                    # Getting all the information of the endpoint geneInfo
+                    ext = "/lookup/symbol/homo_sapiens/" + gene + "?"
+                    decoded = get_info(ext)
+                    start = decoded["start"]
+                    end = decoded["end"]
+                    chromosome = decoded["seq_region_name"]
+                    id_gene = decoded["id"]
+                    length_gene = end - start
+                    # Viewing if it is json or not
+                    if "json=1" in user_line:
+                        dict_info = {"Start": start, "End": end, "Chromosome": chromosome,
+                                     "Id": id_gene, "Length": length_gene}
+                        contents_2 = json.dumps({"info": dict_info})
+                    else:
+                        contents += f"The gene gene  starts at  {str(start)}<br>The gene gene ends at {str(end)}" \
+                                       f"<br>The gene gene is located at {str(chromosome)} chromosome<br>" \
+                                       f"The id of the gene is:  {id_gene}<br>The length of the gene is: " \
+                                       f"{str(length_gene)}<br><br>"
+                        contents_2 = contents + final_message
+                    error_code = 200
+                except requests.exceptions.HTTPError:
+                    contents_2 = Path("Error.html").read_text()
+                    error_code = 404
+            elif verb == "/geneCalc":
+                try:
+                    # First things to do
+                    line = line_path[1]
+                    tittle = "INFO OF A GENE"
+                    sub_tittle = "The information of a human gene"
+                    contents_in = html_folder(tittle, sub_tittle)
+                    initial_index = line.find("=")
+                    gene = line[initial_index + 1:]
+                    # Getting the sequence
+                    ext = "/xrefs/symbol/homo_sapiens/" + gene + "?"
+                    id_gene = get_info(ext)
+                    id_gene = id_gene[0]["id"]
+                    s = get_sequence(id_gene)
+                    # Using the Class
+                    seq = Seq(s)
+                    dict_sol = percentages(seq)
+                    list_keys = list(dict_sol.keys())
+                    list_values = list(dict_sol.values())
+                    contents_in += f"The length of the gene is: {str(seq.len())} <br>Information about the bases<ul>"
+                    # Viewing if it is json or not
+                    if "json=1" in user_line:
+                        list_keys.append("Length")
+                        list_values.append(str(seq.len()))
+                        final_dict = dict(zip(list_keys, list_values))
+                        contents_2 = json.dumps({"Calc": final_dict})
+                    else:
+                        for n in list_keys:
+                            index_base = list_keys.index(n)
+                            contents += f"<li> Base:  {str(list_keys[index_base])}"
+                            contents += f" --> {str(list_values[index_base])} </li>"
+                        contents_2 = contents + f"</ul>" + final_message
+                    error_code = 200
+                except requests.exceptions.HTTPError:
+                    contents_2 = Path("Error.html").read_text()
+                    error_code = 404
+            elif verb == "/geneList":
+                try:
+                    # First things to do
+                    line = line_path[1]
+                    tittle = "LIST OF GENES IN A RANGE"
+                    sub_tittle = "All the genes in a specific range"
+                    contents_in = html_folder(tittle, sub_tittle)
+                    list_ = line.split("=")
+                    index_a = list_[1].find("&")
+                    chromosome = list_[1][:index_a]
+                    index_b = list_[2].find("&")
+                    start = list_[2][:index_b]
+                    end = list_[3]
+                    ext = "/overlap/region/human/" + chromosome + ":" + start + "-" + end + \
+                          "?feature=gene;feature=transcript;feature=cds;feature=exon"
+                    gene_list_ = get_info(ext)
+                    contents_in += f"The genes in the range: {start} - {end} are: <br><br>"
+                    # Viewing if it is json or not
+                    if "json=1" in user_line:
+                        list_keys = []
+                        list_values = []
+                        for n in gene_list_:
+                            index = gene_list_.index(n)
+                            list_keys.append(gene_list_[index]["id"])
+                            if "external_name" in gene_list_[index]:
+                                list_values.append(gene_list_[index]["external_name"])
+                            else:
+                                list_values.append("No name found")
+                        final_dict = dict(zip(list_keys, list_values))
+                        contents = json.dumps({"List": final_dict})
+                    else:
+                        for n in gene_list_:
+                            index = gene_list_.index(n)
+                            contents += f"""Gene: {gene_list_[index]["id"]}"""
+                            if "external_name" in gene_list_[index]:
+                                contents += f""" -->  {gene_list_[index]["external_name"]}<br>"""
+                            else:
+                                contents += f"<br>"
+                        contents_2 = contents + final_message
+                    error_code = 200
+                except requests.exceptions.HTTPError:
+                    contents_2 = Path("Error.html").read_text()
+                    error_code = 404
+        print(contents_2)
+
+        self.send_response(error_code)
+        # Define the content-type header:
         self.send_header('Content-Type', content_type)
-        self.send_header('Content-Length', len(contents.encode()))
-
-        # -- The header is finished
-        self.end_headers()
-
-        # -- Send the response message
-        self.wfile.write(contents.encode())
+        if "json=1" in user_line:
+            encoded_dict = str(contents_2).encode('utf-8')
+            # -- base64_dict = base64.b64encode(encoded_dict)
+            self.send_header('Content-Length', len(encoded_dict))
+            self.end_headers()
+            self.wfile.write(encoded_dict)
+        else:
+            self.send_header('Content-Length', len(str.encode(contents_2)))
+            self.end_headers()
+            self.wfile.write(str.encode(contents_2))
 
         return
 
-    # ------------------------
-    # - Server MAIN program
-    # ------------------------
-    # -- Set the new handler
+
+# ------------------------
+# - Server MAIN program
+# ------------------------
+# -- Set the new handler
 
 
 Handler = TestHandler
 
 # -- Open the socket server
-with socketserver.TCPServer(('', PORT), Handler) as httpd:
+with socketserver.TCPServer(("", PORT), Handler) as httpd:
     print("Serving at PORT", PORT)
 
     # -- Main loop: Attend the client. Whenever there is a new
@@ -288,6 +427,6 @@ with socketserver.TCPServer(('', PORT), Handler) as httpd:
     try:
         httpd.serve_forever()
     except KeyboardInterrupt:
-        print('')
-        print('Stopped by the user')
+        print("")
+        print("Stopped by the user")
         httpd.server_close()

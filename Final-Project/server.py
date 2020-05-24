@@ -128,20 +128,21 @@ class TestHandler(http.server.BaseHTTPRequestHandler):
             path_endpoint = "/info/species?"
             # we take the part of the line with the parameters
             line = line_path[1]
-            # obtain the limit number from the path
-            limit_number = line[line.find("=") + 1:]
-            # get from the dictionary obtain from this endpoint the values for 'species'
-            info = data_dict(path_endpoint)["species"]
-            # create a list with this values and calculate its length
-            list_species = list(info)
-            number_species = len(list_species)
-            # if the user does not enter a limit we suppose that wants all the species
-            if limit_number == "":
-                num = number_species
-            else:
-                num = int(limit_number)
-            # create the html file
-            contents = f"""
+            try:
+                # obtain the limit number from the path
+                limit_number = line[line.find("=") + 1:]
+                # get from the dictionary obtain from this endpoint the values for 'species'
+                info = data_dict(path_endpoint)["species"]
+                # create a list with this values and calculate its length
+                list_species = list(info)
+                number_species = len(list_species)
+                # if the user does not enter a limit we suppose that wants all the species
+                if limit_number == "":
+                    num = number_species
+                else:
+                    num = int(limit_number)
+                    # create the html file
+                contents = f"""
                                        <!DOCTYPE html>
                                        <html lang = "en">
                                        <head>
@@ -158,9 +159,9 @@ class TestHandler(http.server.BaseHTTPRequestHandler):
                                        </body>
                                        </html>
                                        """
-            count = 0
-            total_species = []
-            try:
+                count = 0
+                total_species = []
+
                 if "json=1" in path_req:
                     while num > count:
                         # create a dictionary containing a list with the names of the species in json file
@@ -179,6 +180,10 @@ class TestHandler(http.server.BaseHTTPRequestHandler):
                 # this exception is reached when the specie is not in the data base
                 contents = Path('Error.html').read_text()
                 error_code = 404
+            except LookupError:
+                # this exception is reached when the specie is not in the data base
+                contents = Path('Error.html').read_text()
+                error_code = 404
 
         # Karyotype endpoint--> with a given specie, returns all the chromosomes name of that specie
         elif verb == "/karyotype":
@@ -187,27 +192,28 @@ class TestHandler(http.server.BaseHTTPRequestHandler):
             line = line_path[1]
             # obtain the specie name from the path
             name = line[line.find("=") + 1:]
-            # get from the dictionary obtain from this endpoint the values for 'karyotype'
-            endpoint = path_endpoint + name + "?"
-            info = data_dict(endpoint)["karyotype"]
-            # we create a list with the values for the karyotype obtained
-            list_chromosome = list(info)
-            # create the html file
-            contents = f"""
-                        <!DOCTYPE html>
-                        <html lang = "en">
-                        <head>
-                        <meta charset = "utf-8" >
-                          <title> Karyotype </title >
-                        </head >
-                        <body style="background-color:peachpuff ;">
-                        The names of the chromosomes are:
-
-
-                        </body>
-                        </html>
-                        """
             try:
+                # get from the dictionary obtain from this endpoint the values for 'karyotype'
+                endpoint = path_endpoint + name + "?"
+                info = data_dict(endpoint)["karyotype"]
+                # we create a list with the values for the karyotype obtained
+                list_chromosome = list(info)
+                # create the html file
+                contents = f"""
+                            <!DOCTYPE html>
+                            <html lang = "en">
+                            <head>
+                            <meta charset = "utf-8" >
+                              <title> Karyotype </title >
+                            </head >
+                            <body style="background-color:peachpuff ;">
+                            The names of the chromosomes are:
+
+
+                            </body>
+                            </html>
+                            """
+
                 if "json=1" in path_req:
                     # create a dictionary containing a list with the names chromosomes in json file
                     contents = json.dumps({"karyotype": list_chromosome})
@@ -218,6 +224,10 @@ class TestHandler(http.server.BaseHTTPRequestHandler):
                     contents += f"""<br><br><br><a href="/">Main page</a>"""
                 error_code = 200
             except ValueError:
+                # this exception is reached when the specie is not in the data base
+                contents = Path('Error.html').read_text()
+                error_code = 404
+            except LookupError:
                 # this exception is reached when the specie is not in the data base
                 contents = Path('Error.html').read_text()
                 error_code = 404
@@ -234,21 +244,22 @@ class TestHandler(http.server.BaseHTTPRequestHandler):
             line_chromo = line_endpoint[1].split("=")
             specie = line_specie[1]
             chromo = line_chromo[1]
-            endpoint = path_endpoint + specie + "/" + chromo + "?"
-            # create the html file
-            contents = f"""
-                                    <!DOCTYPE html>
-                                    <html lang = "en">
-                                    <head>
-                                    <meta charset = "utf-8" >
-                                      <title> Chromosome Length </title >
-                                    </head >
-                                    <body style="background-color:plum">
-
-                                    </body>
-                                    </html>
-                                    """
             try:
+                endpoint = path_endpoint + specie + "/" + chromo + "?"
+                # create the html file
+                contents = f"""
+                                                    <!DOCTYPE html>
+                                                    <html lang = "en">
+                                                    <head>
+                                                    <meta charset = "utf-8" >
+                                                      <title> Chromosome Length </title >
+                                                    </head >
+                                                    <body style="background-color:plum">
+
+                                                    </body>
+                                                    </html>
+                                                    """
+
                 # get from the dictionary obtain from this endpoint the value for 'length'
                 info = data_dict(endpoint)["length"]
                 length = str(info)
@@ -260,6 +271,10 @@ class TestHandler(http.server.BaseHTTPRequestHandler):
                     contents += f"""<i> The length of the chromosome is: {length} </i> <br><br><br>
                                     <a href="/">Main page</a>"""
             except ValueError:
+                # this exception is reached when the length is not in the data base
+                contents = Path("Error.html").read_text()
+                error_code = 404
+            except LookupError:
                 # this exception is reached when the length is not in the data base
                 contents = Path("Error.html").read_text()
                 error_code = 404
@@ -300,6 +315,10 @@ class TestHandler(http.server.BaseHTTPRequestHandler):
                     contents = json.dumps({"sequence": gene_seq})
                 error_code = 200
             except ValueError:
+                # this exception is reached when the gene you selected is not in the data base
+                contents = Path("Error.html").read_text()
+                error_code = 404
+            except LookupError:
                 # this exception is reached when the gene you selected is not in the data base
                 contents = Path("Error.html").read_text()
                 error_code = 404
@@ -359,6 +378,10 @@ class TestHandler(http.server.BaseHTTPRequestHandler):
                 # this exception is reached when the gene you selected is not in the data base
                 contents = Path("Error.html").read_text()
                 error_code = 404
+            except LookupError:
+                # this exception is reached when the gene you selected is not in the data base
+                contents = Path("Error.html").read_text()
+                error_code = 404
 
         # geneCalc endpoint--> with a given gene, it returns information about it
         elif verb == "/geneCalc":
@@ -408,6 +431,10 @@ class TestHandler(http.server.BaseHTTPRequestHandler):
                         contents += f"""<p>{n}: {gene_seq.count(n)} ({i}%) </p>"""
                     contents += f"""<br><br><br><a href="/">Main page</a></body></html>"""
             except ValueError:
+                # this exception is reached when the gene you selected is not in the data base
+                contents = Path("Error.html").read_text()
+                error_code = 404
+            except LookupError:
                 # this exception is reached when the gene you selected is not in the data base
                 contents = Path("Error.html").read_text()
                 error_code = 404
@@ -468,6 +495,10 @@ class TestHandler(http.server.BaseHTTPRequestHandler):
                     contents += f"""<br><br><br><a href="/">Main page</a></body></html>"""
                 error_code = 200
             except ValueError:
+                # this exception is reached when the fraction of chromosome you selected is not valid
+                contents = Path("Error.html").read_text()
+                error_code = 404
+            except LookupError:
                 # this exception is reached when the fraction of chromosome you selected is not valid
                 contents = Path("Error.html").read_text()
                 error_code = 404

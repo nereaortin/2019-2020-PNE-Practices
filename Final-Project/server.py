@@ -446,32 +446,33 @@ class TestHandler(http.server.BaseHTTPRequestHandler):
             line = line_path[1]
             # separate the 3 given parameters that are separated with '&'
             data = line.split("&")
-            # we take the parameters entered by the user that are located after '='
-            index_1 = data[0].find("=")
-            index_2 = data[1].find("=")
-            index_3 = data[2].find("=")
-            chromosome = data[0][index_1 + 1:]
-            start = data[1][index_2 + 1:]
-            end = data[2][index_3 + 1:]
-            params = "?feature=gene;content-type=application/json"
-            # define the endpoint where we are taking the info
-            endpoint = path_endpoint + chromosome + ":" + start + "-" + end + params
-            # create the html file
-            contents = f"""
-                                     <!DOCTYPE html>
-                                     <html lang = "en">
-                                     <head>
-                                     <meta charset = "utf-8" >
-                                     <title> Gene List</title >
-                                     </head >
-                                    <body style="background-color:lightblue;">
-                                     <h3>Genes located in the {chromosome} chromosome:</h3>
-                                     <h4>From {start} to {end} are:</h4>
-
-                                     </body>
-                                     </html>
-                                     """
             try:
+                # we take the parameters entered by the user that are located after '='
+                index_1 = data[0].find("=")
+                index_2 = data[1].find("=")
+                index_3 = data[2].find("=")
+                chromosome = data[0][index_1 + 1:]
+                start = data[1][index_2 + 1:]
+                end = data[2][index_3 + 1:]
+                params = "?feature=gene;content-type=application/json"
+                # define the endpoint where we are taking the info
+                endpoint = path_endpoint + chromosome + ":" + start + "-" + end + params
+                # create the html file
+                contents = f"""
+                                                     <!DOCTYPE html>
+                                                     <html lang = "en">
+                                                     <head>
+                                                     <meta charset = "utf-8" >
+                                                     <title> Gene List</title >
+                                                     </head >
+                                                    <body style="background-color:lightblue;">
+                                                     <h3>Genes located in the {chromosome} chromosome:</h3>
+                                                     <h4>From {start} to {end} are:</h4>
+
+                                                     </body>
+                                                     </html>
+                                                     """
+
                 # get a list of dictionaries with the genes obtain around this fraction
                 r = requests.get("https://rest.ensembl.org" + endpoint, headers={"Content-Type": "application/json"})
 
@@ -499,6 +500,10 @@ class TestHandler(http.server.BaseHTTPRequestHandler):
                 contents = Path("Error.html").read_text()
                 error_code = 404
             except LookupError:
+                # this exception is reached when the fraction of chromosome you selected is not valid
+                contents = Path("Error.html").read_text()
+                error_code = 404
+            except requests.exceptions.HTTPError:
                 # this exception is reached when the fraction of chromosome you selected is not valid
                 contents = Path("Error.html").read_text()
                 error_code = 404
